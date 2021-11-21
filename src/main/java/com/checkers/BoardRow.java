@@ -1,8 +1,7 @@
 package com.checkers;
 
-import java.util.*;
-import java.lang.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoardRow {
     private List<Figure> columns = new ArrayList<>();
