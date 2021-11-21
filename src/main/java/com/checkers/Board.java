@@ -43,7 +43,8 @@ public class Board {
             System.out.println("There is no figure at this spot");
             return false;
         } else if (figure.getClass() == Pawn.class) {
-            if (col +1 == newcol && row - 1 == newrow && newcol < 7 && newrow < 7 || col -1 == newcol && row - 1 == newrow && newcol < 7 && newrow < 7) {
+            if (col +1 == newcol && row - 1 == newrow && newcol <= 7 && newcol >= 0 && newrow <= 7 && newrow >= 0
+                    || col -1 == newcol && row - 1 == newrow && newcol <= 7 && newcol >= 0 && newrow <= 7 && newrow >= 0) {
                 Figure newSpot  = getFigure(newcol, newrow);
 
                 if (newSpot.getClass() == None.class) {
@@ -52,7 +53,8 @@ public class Board {
                     m = true;
 
                 } else if (newSpot.getClass() == Pawn.class || newSpot.getClass() == Queen.class) {
-                    if (getFigure(col + 2, row - 2).getClass() == None.class && col+2 <7 && row - 2 < 7 || getFigure(col - 2, row - 2).getClass() == None.class && col-2 > 0 && row - 2 < 7) {
+                    if (getFigure(col + 2, row - 2).getClass() == None.class && col+2 <=7 && row - 2 <= 7 && col+2 >=0 && row - 2 >= 0
+                            || getFigure(col - 2, row - 2).getClass() == None.class && col-2 >= 0 && row - 2 <= 7 && col-2 >=0 && row - 2 >= 0) {
                         setFigure(col, row, new None());
                         setFigure(newcol, newrow, new None());
                         setFigure(col + 2, row - 2, figure);

@@ -14,5 +14,7 @@ public class Main {
         newBoard.setFigure(5, 6, new Pawn());
         newBoard.move(4, 7,  5, 6);
         System.out.println(newBoard);
+        newBoard.move(6, 5, 7, 4);
+        System.out.println(newBoard);
     }
 }
