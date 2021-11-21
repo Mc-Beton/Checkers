@@ -35,4 +35,38 @@ public class Board {
     public void setFigure(int col, int row, Figure figure) {
         rows.get(row).getColumns().set(col, figure);
     }
+
+    public boolean move(int col, int row, int newcol, int newrow) {
+        boolean m = false;
+        Figure figure = getFigure(col, row);
+        if (figure.getClass() == None.class) {
+            System.out.println("There is no figure at this spot");
+            return false;
+        } else if (figure.getClass() == Pawn.class) {
+            if (col +1 == newcol && row - 1 == newrow && newcol < 7 && newrow < 7 || col -1 == newcol && row - 1 == newrow && newcol < 7 && newrow < 7) {
+                Figure newSpot  = getFigure(newcol, newrow);
+
+                if (newSpot.getClass() == None.class) {
+                    setFigure(col, row, new None());
+                    setFigure(newcol, newrow, figure);
+                    m = true;
+
+                } else if (newSpot.getClass() == Pawn.class || newSpot.getClass() == Queen.class) {
+                    if (getFigure(col + 2, row - 2).getClass() == None.class && col+2 <7 && row - 2 < 7 || getFigure(col - 2, row - 2).getClass() == None.class && col-2 > 0 && row - 2 < 7) {
+                        setFigure(col, row, new None());
+                        setFigure(newcol, newrow, new None());
+                        setFigure(col + 2, row - 2, figure);
+                        m = true;
+                    } else {
+                        System.out.println("Movement is not possible");
+                        return false;
+                    }
+                }
+            } else {
+                System.out.println("Movement not possible");
+                return false;
+            }
+        }
+        return m;
+    }
 }
