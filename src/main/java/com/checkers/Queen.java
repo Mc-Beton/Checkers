@@ -1,15 +1,22 @@
 package com.checkers;
 
 public class Queen implements Figure {
-    private Figure queen;
+    private final FigureColor color;
 
-    public void color() {
+    public Queen(FigureColor color) {
+        this.color = color;
     }
 
-    public Queen() {
-        this.queen = queen;
-    }
     public String toString() {
-        return "Q";
+        return colorSymbol() + "Q";
+    }
+
+    private String colorSymbol() {
+        return (color == FigureColor.WHITE) ? "w" : "b";
+    }
+
+    @Override
+    public FigureColor getColor() {
+        return color;
     }
 }

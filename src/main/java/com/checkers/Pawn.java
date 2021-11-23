@@ -1,15 +1,22 @@
 package com.checkers;
 
 public class Pawn implements Figure {
-    private Figure pawn;
+    private final FigureColor color;
 
-    public void color() {
+    public Pawn(FigureColor color) {
+        this.color = color;
     }
 
-    public Pawn() {
-        this.pawn = pawn;
+    @Override
+    public FigureColor getColor() {
+        return color;
     }
+
+    private String colorSymbol() {
+        return (color == FigureColor.WHITE) ? "w" : "b";
+    }
+
     public String toString() {
-        return "P";
+        return colorSymbol() + "P";
     }
 }

@@ -1,15 +1,13 @@
 package com.checkers;
 
 public class None implements Figure {
-    private Figure nothing;
 
-    public void color() {
+    public FigureColor getColor() {
+        return FigureColor.NONE;
     }
 
-    public None() {
-        this.nothing = nothing;
-    }
+
     public String toString() {
-        return " ";
+        return "  ";
     }
 }

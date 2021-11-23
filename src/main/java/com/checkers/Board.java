@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
+    private FigureColor whoseMove = FigureColor.WHITE;
     private List<BoardRow> rows = new ArrayList<>();
 
     public Board() {
-        for (int i = 0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             BoardRow boardrows = new BoardRow();
             rows.add(boardrows);
         }
@@ -19,12 +20,12 @@ public class Board {
     }
 
     public String toString() {
-        String line = "=================";
+        String line = "=========================";
         String rowlist = "";
         String boardRows = "";
-        for(BoardRow rowes : rows) {
-            for(Figure figure : rowes.getColumns()) {
-                boardRows += "|" +  figure;
+        for (BoardRow rowes : rows) {
+            for (Figure figure : rowes.getColumns()) {
+                boardRows += "|" + figure;
             }
             rowlist += boardRows + "|" + "\n" + line + "\n";
             boardRows = "";
@@ -39,36 +40,42 @@ public class Board {
     public boolean move(int col, int row, int newcol, int newrow) {
         boolean m = false;
         Figure figure = getFigure(col, row);
-        if (figure.getClass() == None.class) {
-            System.out.println("There is no figure at this spot");
-            return false;
-        } else if (figure.getClass() == Pawn.class) {
-            if (col +1 == newcol && row - 1 == newrow && newcol <= 7 && newcol >= 0 && newrow <= 7 && newrow >= 0
-                    || col -1 == newcol && row - 1 == newrow && newcol <= 7 && newcol >= 0 && newrow <= 7 && newrow >= 0) {
-                Figure newSpot  = getFigure(newcol, newrow);
 
-                if (newSpot.getClass() == None.class) {
-                    setFigure(col, row, new None());
-                    setFigure(newcol, newrow, figure);
-                    m = true;
+        boolean result = true;
+        boolean withHit = false;
+        result = result && isFigurePresent(col, row);
+        result = result && isInRange(newcol, newrow);
+        if (result)
+            doMove(col, row, newcol, newrow, withHit);
+        return result;
 
-                } else if (newSpot.getClass() == Pawn.class || newSpot.getClass() == Queen.class) {
-                    if (getFigure(col + 2, row - 2).getClass() == None.class && col+2 <=7 && row - 2 <= 7 && col+2 >=0 && row - 2 >= 0
-                            || getFigure(col - 2, row - 2).getClass() == None.class && col-2 >= 0 && row - 2 <= 7 && col-2 >=0 && row - 2 >= 0) {
-                        setFigure(col, row, new None());
-                        setFigure(newcol, newrow, new None());
-                        setFigure(col + 2, row - 2, figure);
-                        m = true;
-                    } else {
-                        System.out.println("Movement is not possible");
-                        return false;
-                    }
-                }
-            } else {
-                System.out.println("Movement not possible");
-                return false;
-            }
-        }
-        return m;
+
+    }
+
+    private void doMove(int col, int row, int newcol, int newrow, boolean withHit) {
+        Figure figure = getFigure(col, row);
+        setFigure(col, row, new None());
+        setFigure(newcol, newrow, figure);
+        if (withHit)
+            removeBetween(col, row, newcol, newrow);
+        switchPlayer();
+    }
+
+    private void switchPlayer() {
+        whoseMove = (whoseMove == FigureColor.WHITE) ? FigureColor.BLACK : FigureColor.WHITE;
+    }
+
+    private void removeBetween(int col, int row, int newcol, int newrow) {
+        int dx = (newcol > col) ? 1 : -1;
+        int dy = (newrow > row) ? 1 : -1;
+        setFigure(col + dx, row + dy, new None());
+    }
+
+    private boolean isInRange(int newcol, int newrow) {
+        return newcol >= 0 && newcol <= 7 && newrow >= 0 && newrow <= 7;
+    }
+
+    private boolean isFigurePresent(int col, int row) {
+        return !(getFigure(col, row) instanceof None);
     }
 }
