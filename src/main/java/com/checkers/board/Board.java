@@ -14,6 +14,7 @@ public class Board {
     private FigureColor whoseMove = FigureColor.WHITE;
     private List<BoardRow> rows = new ArrayList<>();
 
+    //Primary methods to create a board
     public Board() {
         for (int i = 0; i < 8; i++) {
             BoardRow boardrows = new BoardRow();
@@ -24,6 +25,10 @@ public class Board {
 
     public Figure getFigure(int col, int row) {
         return rows.get(row).getColumns().get(col);
+    }
+
+    public void setFigure(int col, int row, Figure figure) {
+        rows.get(row).getColumns().set(col, figure);
     }
 
     public String toString() {
@@ -40,10 +45,7 @@ public class Board {
         return line + "\n" + rowlist;
     }
 
-    public void setFigure(int col, int row, Figure figure) {
-        rows.get(row).getColumns().set(col, figure);
-    }
-
+    //Methods of Movement
     public boolean move(int col, int row, int newcol, int newrow) {
         boolean newResult = checkPlayerPick(col, row, newcol, newrow);
 
@@ -52,17 +54,6 @@ public class Board {
         boolean withHit = pawnHitOrMove(col, row, newcol, newrow);
         doMove(col, row, newcol, newrow, withHit, newResult);
         return newResult;
-    }
-
-    public boolean checkPlayerPick(int col, int row, int newcol, int newrow) {
-        boolean result = true;
-        result = isInRange(col, row);
-        result = result && isFigurePresent(col, row);
-        result = result && isInRange(newcol, newrow);
-        result = result && isEmpty(newcol, newrow);
-        result = result && checkColor(col, row);
-        result = result && checkTileColor(newcol, newrow);
-        return result;
     }
 
     private void doMove(int col, int row, int newcol, int newrow, boolean withHit, boolean result) {
@@ -86,6 +77,18 @@ public class Board {
         int dx = (newcol > col) ? 1 : -1;
         int dy = (newrow > row) ? 1 : -1;
         setFigure(newcol - dx, newrow - dy, new None());
+    }
+
+    //Methods of pick and movement validation
+    public boolean checkPlayerPick(int col, int row, int newcol, int newrow) {
+        boolean result = true;
+        result = isInRange(col, row);
+        result = result && isFigurePresent(col, row);
+        result = result && isInRange(newcol, newrow);
+        result = result && isEmpty(newcol, newrow);
+        result = result && checkColor(col, row);
+        result = result && checkTileColor(newcol, newrow);
+        return result;
     }
 
     public boolean isInRange(int newcol, int newrow) {
@@ -120,6 +123,7 @@ public class Board {
         return abs(col - newcol) != 1 && abs(row - newrow) != 1;
     }
 
+    //Set new game method
     public void setNewGame() {
         for (int row = 0; row <= 2; row++) {
             for (int col = 0; col <= 7; col++) {
