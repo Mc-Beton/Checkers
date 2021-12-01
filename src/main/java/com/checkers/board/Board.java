@@ -53,7 +53,7 @@ public class Board {
         if (getFigure(col, row) instanceof Pawn && newResult) {
             newResult = colorMoveDirection(col, row, newrow);
             System.out.println(newResult);
-            doMove(col, row, newcol, newrow, newResult);
+            doPawnMove(col, row, newcol, newrow, newResult);
         } else if (getFigure(col, row) instanceof Queen && newResult) {
             newResult = queenLineMoveCheck(col, row, newcol, newrow);
             doQueenMove(col, row, newcol, newrow, newResult);
@@ -74,7 +74,7 @@ public class Board {
         switchPlayer();
     }
 
-    private void doMove(int col, int row, int newcol, int newrow, boolean result) {
+    private void doPawnMove(int col, int row, int newcol, int newrow, boolean result) {
         Figure figure = getFigure(col, row);
         System.out.println(result);
         if (result) {
@@ -103,6 +103,36 @@ public class Board {
         int dx = (newcol > col) ? 1 : -1;
         int dy = (newrow > row) ? 1 : -1;
         setFigure(newcol - dx, newrow - dy, new None());
+    }
+
+    private boolean queenCleanMove(int col, int row, int newcol, int newrow) {
+        boolean result = true;
+        int dx = (newcol > col) ? 1 : -1;
+        int dy = (newrow > row) ? 1 : -1;
+        int xc = col;
+        int xr = row;
+        while (xc != newcol && xr != newrow) {
+            xc = xc + dx;
+            xr = xr + dy;
+            result = result && (getFigure(xc, xr) instanceof None);
+        }
+        return result;
+    }
+
+    private boolean queenHitMove(int col, int row, int newcol, int newrow) {
+        int dx = (newcol > col) ? 1 : -1;
+        int dy = (newrow > row) ? 1 : -1;
+        int xc = col;
+        int xr = row;
+        int count = 0;
+        while (xc != newcol && xr != newrow) {
+            xc = xc + dx;
+            xr = xr + dy;
+            if (!(getFigure(xc, xr) instanceof None)) {
+                count++;
+            }
+        }
+        return count == 1 && !(getFigure(newcol - dx, newrow - dy) instanceof None);
     }
 
     //Methods of pick and movement validation
@@ -150,37 +180,7 @@ public class Board {
     }
 
     private boolean queenLineMoveCheck(int col, int row, int newcol, int newrow) {
-        return abs(col-newcol) == abs(row-newrow);
-    }
-
-    private boolean queenCleanMove(int col, int row, int newcol, int newrow) {
-        boolean result = true;
-        int dx = (newcol > col) ? 1 : -1;
-        int dy = (newrow > row) ? 1 : -1;
-        int xc = col;
-        int xr = row;
-        while (xc != newcol && xr != newrow) {
-            xc = xc + dx;
-            xr = xr + dy;
-            result = result && (getFigure(xc, xr) instanceof None);
-        }
-        return result;
-    }
-
-    private boolean queenHitMove(int col, int row, int newcol, int newrow) {
-        boolean result = true;
-        int dx = (newcol > col) ? 1 : -1;
-        int dy = (newrow > row) ? 1 : -1;
-        int xc = col;
-        int xr = row;
-        int count = 0;
-        while (xc != newcol && xr != newrow) {
-            xc = xc + dx;
-            xr = xr + dy;
-            if (!(getFigure(xc, xr) instanceof None))
-                count++;
-        }
-        return count == 1 && !(getFigure(newcol - dx, newrow - dy) instanceof None);
+        return abs(col - newcol) == abs(row - newrow);
     }
 
     //Set new game method
