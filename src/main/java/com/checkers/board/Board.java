@@ -45,21 +45,21 @@ public class Board {
     }
 
     public boolean move(int col, int row, int newcol, int newrow) {
-        boolean result = true;
-        boolean withHit = false;
-        boolean newResult = checkPlayerPick(col, row, newcol, newrow, result);
+        boolean newResult = checkPlayerPick(col, row, newcol, newrow);
 
-        if (getFigure(col, row) instanceof Pawn && newResult == true)
-            newResult = colorMoveDirection(col, row, newrow);
-            withHit = pawnHitOrMove(col, row, newcol, newrow);
-            doMove(col, row, newcol, newrow, withHit, newResult);
+        if (getFigure(col, row) instanceof Pawn && newResult)
+            newResult = newResult && colorMoveDirection(col, row, newrow);
+        boolean withHit = pawnHitOrMove(col, row, newcol, newrow);
+        doMove(col, row, newcol, newrow, withHit, newResult);
         return newResult;
     }
 
-    public boolean checkPlayerPick(int col, int row, int newcol, int newrow, boolean result) {
-        result = result && isInRange(col, row);
+    public boolean checkPlayerPick(int col, int row, int newcol, int newrow) {
+        boolean result = true;
+        result = isInRange(col, row);
         result = result && isFigurePresent(col, row);
         result = result && isInRange(newcol, newrow);
+        result = result && isEmpty(newcol, newrow);
         result = result && checkColor(col, row);
         result = result && checkTileColor(newcol, newrow);
         return result;
@@ -67,13 +67,15 @@ public class Board {
 
     private void doMove(int col, int row, int newcol, int newrow, boolean withHit, boolean result) {
         Figure figure = getFigure(col, row);
-        if (result = true)
+        if (result) {
             setFigure(col, row, new None());
             setFigure(newcol, newrow, figure);
-            if (withHit = true)
+            if (withHit)
                 removeBetween(col, row, newcol, newrow);
             switchPlayer();
-
+        } else {
+            System.out.println("Invalid move, try again");
+        }
     }
 
     public void switchPlayer() {
@@ -94,9 +96,15 @@ public class Board {
         return !(getFigure(col, row) instanceof None);
     }
 
-    public boolean checkColor(int col, int row) { return getFigure(col, row).getColor() == whoseMove; }
+    public boolean isEmpty(int col, int row) {
+        return getFigure(col, row) instanceof None;
+    }
 
-    public boolean colorMoveDirection (int col, int row, int newrow) {
+    public boolean checkColor(int col, int row) {
+        return getFigure(col, row).getColor() == whoseMove;
+    }
+
+    public boolean colorMoveDirection(int col, int row, int newrow) {
         Figure figure = getFigure(col, row);
         if (figure.getColor() == FigureColor.WHITE)
             return (row > newrow);
@@ -104,9 +112,26 @@ public class Board {
             return (newrow > row);
     }
 
-    public boolean checkTileColor(int newcol, int newrow) { return (newcol + newrow) % 2 != 0; }
+    public boolean checkTileColor(int newcol, int newrow) {
+        return (newcol + newrow) % 2 != 0;
+    }
 
-    private boolean pawnHitOrMove (int col, int row, int newcol, int newrow) {
+    private boolean pawnHitOrMove(int col, int row, int newcol, int newrow) {
         return abs(col - newcol) != 1 && abs(row - newrow) != 1;
+    }
+
+    public void setNewGame() {
+        for (int row = 0; row <= 2; row++) {
+            for (int col = 0; col <= 7; col++) {
+                if (checkTileColor(col, row))
+                    setFigure(col, row, new Pawn(FigureColor.BLACK));
+            }
+        }
+        for (int row = 5; row <= 7; row++) {
+            for (int col = 0; col <= 7; col++) {
+                if (checkTileColor(col, row))
+                    setFigure(col, row, new Pawn(FigureColor.WHITE));
+            }
+        }
     }
 }

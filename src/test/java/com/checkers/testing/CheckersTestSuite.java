@@ -25,21 +25,18 @@ public class CheckersTestSuite {
         //Given
         Board newBoard = new Board();
         newBoard.setFigure(4, 1, new Pawn(FigureColor.BLACK));
-        boolean result = true;
         FigureColor whoseMove = FigureColor.BLACK;
 
         //When
         boolean firstPick = newBoard.isInRange(4, 1);
         boolean isThereAFigure = newBoard.isFigurePresent(4, 1);
-        boolean colorRound = newBoard.checkColor(4,1);
         boolean tileColor = newBoard.checkTileColor(4, 2);
 
         //Then
         assertTrue(firstPick);
         assertTrue(isThereAFigure);
-        //assertFalse(colorRound);
         assertFalse(tileColor);
-        assertFalse(newBoard.checkPlayerPick(4, 1, 5, 2, result));
+        assertFalse(newBoard.checkPlayerPick(4, 1, 5, 2));
         assertFalse(newBoard.move(4,1, 5, 3));
     }
 

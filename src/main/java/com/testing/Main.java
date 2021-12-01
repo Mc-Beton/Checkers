@@ -13,11 +13,15 @@ public class Main {
         newBoard.setFigure(4, 7, new Pawn(FigureColor.WHITE));
         newBoard.setFigure(5, 6, new Pawn(FigureColor.BLACK));
         System.out.println(newBoard);
-        newBoard.move(1, 0, 0, 2);
+        newBoard.move(1, 0, 0, 1);
         System.out.println(newBoard);
         newBoard.move(4, 7,  6, 5);
         System.out.println(newBoard);
+        newBoard.move(1, 0, 0, 1);
+        System.out.println(newBoard);
+        newBoard.move(6, 5,  5, 6);
 
+        newBoard.setNewGame();
         System.out.println(newBoard);
     }
 }
