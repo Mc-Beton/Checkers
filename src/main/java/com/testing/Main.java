@@ -9,18 +9,6 @@ import com.checkers.figures.Queen;
 public class Main {
     public static void main (String[] args) throws java.lang.Exception {
         Board newBoard = new Board();
-        newBoard.setFigure(1, 0, new Pawn(FigureColor.BLACK));
-        newBoard.setFigure(4, 7, new Pawn(FigureColor.WHITE));
-        newBoard.setFigure(5, 6, new Pawn(FigureColor.BLACK));
-        System.out.println(newBoard);
-        newBoard.move(1, 0, 0, 1);
-        System.out.println(newBoard);
-        newBoard.move(4, 7,  6, 5);
-        System.out.println(newBoard);
-        newBoard.move(1, 0, 0, 1);
-        System.out.println(newBoard);
-        newBoard.move(6, 5,  5, 6);
-
         newBoard.setNewGame();
         System.out.println(newBoard);
     }

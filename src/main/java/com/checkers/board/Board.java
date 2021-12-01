@@ -4,6 +4,7 @@ import com.checkers.figures.Figure;
 import com.checkers.figures.FigureColor;
 import com.checkers.figures.None;
 import com.checkers.figures.Pawn;
+import com.checkers.figures.Queen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,28 +50,53 @@ public class Board {
     public boolean move(int col, int row, int newcol, int newrow) {
         boolean newResult = checkPlayerPick(col, row, newcol, newrow);
 
-        if (getFigure(col, row) instanceof Pawn && newResult)
-            newResult = newResult && colorMoveDirection(col, row, newrow);
-        boolean withHit = pawnHitOrMove(col, row, newcol, newrow);
-        doMove(col, row, newcol, newrow, withHit, newResult);
+        if (getFigure(col, row) instanceof Pawn && newResult) {
+            newResult = colorMoveDirection(col, row, newrow);
+            System.out.println(newResult);
+            doMove(col, row, newcol, newrow, newResult);
+        } else if (getFigure(col, row) instanceof Queen && newResult) {
+            newResult = queenLineMoveCheck(col, row, newcol, newrow);
+            doQueenMove(col, row, newcol, newrow, newResult);
+        }
         return newResult;
     }
 
-    private void doMove(int col, int row, int newcol, int newrow, boolean withHit, boolean result) {
+    private void doQueenMove(int col, int row, int newcol, int newrow, boolean result) {
         Figure figure = getFigure(col, row);
+        if (result && queenCleanMove(col, row, newcol, newrow)) {
+            setFigure(col, row, new None());
+            setFigure(newcol, newrow, figure);
+        } else if (result && queenHitMove(col, row, newcol, newrow)) {
+            setFigure(col, row, new None());
+            setFigure(newcol, newrow, figure);
+            removeBetween(col, row, newcol, newrow);
+        }
+        switchPlayer();
+    }
+
+    private void doMove(int col, int row, int newcol, int newrow, boolean result) {
+        Figure figure = getFigure(col, row);
+        System.out.println(result);
         if (result) {
             setFigure(col, row, new None());
             setFigure(newcol, newrow, figure);
-            if (withHit)
-                removeBetween(col, row, newcol, newrow);
-            switchPlayer();
-        } else {
-            System.out.println("Invalid move, try again");
         }
+        if (pawnHitOrMove(col, row, newcol, newrow))
+            removeBetween(col, row, newcol, newrow);
+        if (newrow == 0 || newrow == 7)
+            makeQueen(newcol, newrow);
+        switchPlayer();
     }
 
     public void switchPlayer() {
         whoseMove = (whoseMove == FigureColor.WHITE) ? FigureColor.BLACK : FigureColor.WHITE;
+    }
+
+    public void makeQueen(int col, int row) {
+        if (row == 0)
+            setFigure(col, row, new Queen(FigureColor.WHITE));
+        else if (row == 7)
+            setFigure(col, row, new Queen(FigureColor.BLACK));
     }
 
     private void removeBetween(int col, int row, int newcol, int newrow) {
@@ -121,6 +147,40 @@ public class Board {
 
     private boolean pawnHitOrMove(int col, int row, int newcol, int newrow) {
         return abs(col - newcol) != 1 && abs(row - newrow) != 1;
+    }
+
+    private boolean queenLineMoveCheck(int col, int row, int newcol, int newrow) {
+        return abs(col-newcol) == abs(row-newrow);
+    }
+
+    private boolean queenCleanMove(int col, int row, int newcol, int newrow) {
+        boolean result = true;
+        int dx = (newcol > col) ? 1 : -1;
+        int dy = (newrow > row) ? 1 : -1;
+        int xc = col;
+        int xr = row;
+        while (xc != newcol && xr != newrow) {
+            xc = xc + dx;
+            xr = xr + dy;
+            result = result && (getFigure(xc, xr) instanceof None);
+        }
+        return result;
+    }
+
+    private boolean queenHitMove(int col, int row, int newcol, int newrow) {
+        boolean result = true;
+        int dx = (newcol > col) ? 1 : -1;
+        int dy = (newrow > row) ? 1 : -1;
+        int xc = col;
+        int xr = row;
+        int count = 0;
+        while (xc != newcol && xr != newrow) {
+            xc = xc + dx;
+            xr = xr + dy;
+            if (!(getFigure(xc, xr) instanceof None))
+                count++;
+        }
+        return count == 1 && !(getFigure(newcol - dx, newrow - dy) instanceof None);
     }
 
     //Set new game method
