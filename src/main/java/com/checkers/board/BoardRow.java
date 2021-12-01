@@ -1,4 +1,7 @@
-package com.checkers;
+package com.checkers.board;
+
+import com.checkers.figures.Figure;
+import com.checkers.figures.None;
 
 import java.util.ArrayList;
 import java.util.List;

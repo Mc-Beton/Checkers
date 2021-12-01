@@ -1,7 +1,14 @@
-package com.checkers;
+package com.checkers.board;
+
+import com.checkers.figures.Figure;
+import com.checkers.figures.FigureColor;
+import com.checkers.figures.None;
+import com.checkers.figures.Pawn;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.abs;
 
 public class Board {
     private FigureColor whoseMove = FigureColor.WHITE;
@@ -38,44 +45,68 @@ public class Board {
     }
 
     public boolean move(int col, int row, int newcol, int newrow) {
-        boolean m = false;
-        Figure figure = getFigure(col, row);
-
         boolean result = true;
         boolean withHit = false;
+        boolean newResult = checkPlayerPick(col, row, newcol, newrow, result);
+
+        if (getFigure(col, row) instanceof Pawn && newResult == true)
+            newResult = colorMoveDirection(col, row, newrow);
+            withHit = pawnHitOrMove(col, row, newcol, newrow);
+            doMove(col, row, newcol, newrow, withHit, newResult);
+        return newResult;
+    }
+
+    public boolean checkPlayerPick(int col, int row, int newcol, int newrow, boolean result) {
+        result = result && isInRange(col, row);
         result = result && isFigurePresent(col, row);
         result = result && isInRange(newcol, newrow);
-        if (result)
-            doMove(col, row, newcol, newrow, withHit);
+        result = result && checkColor(col, row);
+        result = result && checkTileColor(newcol, newrow);
         return result;
-
-
     }
 
-    private void doMove(int col, int row, int newcol, int newrow, boolean withHit) {
+    private void doMove(int col, int row, int newcol, int newrow, boolean withHit, boolean result) {
         Figure figure = getFigure(col, row);
-        setFigure(col, row, new None());
-        setFigure(newcol, newrow, figure);
-        if (withHit)
-            removeBetween(col, row, newcol, newrow);
-        switchPlayer();
+        if (result = true)
+            setFigure(col, row, new None());
+            setFigure(newcol, newrow, figure);
+            if (withHit = true)
+                removeBetween(col, row, newcol, newrow);
+            switchPlayer();
+
     }
 
-    private void switchPlayer() {
+    public void switchPlayer() {
         whoseMove = (whoseMove == FigureColor.WHITE) ? FigureColor.BLACK : FigureColor.WHITE;
     }
 
     private void removeBetween(int col, int row, int newcol, int newrow) {
         int dx = (newcol > col) ? 1 : -1;
         int dy = (newrow > row) ? 1 : -1;
-        setFigure(col + dx, row + dy, new None());
+        setFigure(newcol - dx, newrow - dy, new None());
     }
 
-    private boolean isInRange(int newcol, int newrow) {
+    public boolean isInRange(int newcol, int newrow) {
         return newcol >= 0 && newcol <= 7 && newrow >= 0 && newrow <= 7;
     }
 
-    private boolean isFigurePresent(int col, int row) {
+    public boolean isFigurePresent(int col, int row) {
         return !(getFigure(col, row) instanceof None);
+    }
+
+    public boolean checkColor(int col, int row) { return getFigure(col, row).getColor() == whoseMove; }
+
+    public boolean colorMoveDirection (int col, int row, int newrow) {
+        Figure figure = getFigure(col, row);
+        if (figure.getColor() == FigureColor.WHITE)
+            return (row > newrow);
+        else
+            return (newrow > row);
+    }
+
+    public boolean checkTileColor(int newcol, int newrow) { return (newcol + newrow) % 2 != 0; }
+
+    private boolean pawnHitOrMove (int col, int row, int newcol, int newrow) {
+        return abs(col - newcol) != 1 && abs(row - newrow) != 1;
     }
 }
