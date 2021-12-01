@@ -1,4 +1,4 @@
-package com.checkers;
+package com.checkers.figures;
 
 public interface Figure {
     FigureColor getColor();
