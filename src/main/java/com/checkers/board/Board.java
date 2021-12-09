@@ -81,7 +81,7 @@ public class Board {
             setFigure(col, row, new None());
             setFigure(newcol, newrow, figure);
         }
-        if (pawnHitOrMove(col, row, newcol, newrow))
+        if (pawnHit(col, row, newcol, newrow))
             removeBetween(col, row, newcol, newrow);
         if (newrow == 0 || newrow == 7)
             makeQueen(newcol, newrow);
@@ -132,7 +132,7 @@ public class Board {
                 count++;
             }
         }
-        return count == 1 && !(getFigure(newcol - dx, newrow - dy) instanceof None);
+        return count == 1 && !(getFigure(newcol - dx, newrow - dy) instanceof None) && getFigure(newcol - dx, newrow - dy).getColor() != whoseMove;
     }
 
     //Methods of pick and movement validation
@@ -175,8 +175,8 @@ public class Board {
         return (newcol + newrow) % 2 != 0;
     }
 
-    private boolean pawnHitOrMove(int col, int row, int newcol, int newrow) {
-        return abs(col - newcol) != 1 && abs(row - newrow) != 1;
+    private boolean pawnHit(int col, int row, int newcol, int newrow) {
+        return abs(col - newcol) != 1 && abs(row - newrow) != 1 && getFigure(2 * col - newcol, 2 * row - newrow).getColor() != whoseMove;
     }
 
     private boolean queenLineMoveCheck(int col, int row, int newcol, int newrow) {
