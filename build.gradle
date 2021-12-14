@@ -1,9 +1,16 @@
 plugins {
-    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+javafx {
+    version = "17.0.1"
+    modules = [ 'javafx.controls' ]
 }
 
 group 'kodilla-course'
-version '0.0.1-SNAPSHOT'
+version '1.0-SNAPSHOT'
+mainClassName = 'com.checkers.board.CheckersRunner'
 
 repositories {
     mavenCentral()
@@ -15,9 +22,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.0.0'
-
 }
 
 test {
     useJUnitPlatform()
 }
+
+
