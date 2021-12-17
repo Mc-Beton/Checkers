@@ -47,7 +47,8 @@ public class Board {
     }
 
     //Methods of Movement
-    public boolean move(int col, int row, int newcol, int newrow) {
+    public boolean move(int col, int row, int newcol, int newrow, FigureColor color) {
+        whoseMove = color;
         boolean newResult = checkPlayerPick(col, row, newcol, newrow);
 
         if (getFigure(col, row) instanceof Pawn && newResult) {
@@ -71,7 +72,6 @@ public class Board {
             setFigure(newcol, newrow, figure);
             removeBetween(col, row, newcol, newrow);
         }
-        switchPlayer();
     }
 
     private void doPawnMove(int col, int row, int newcol, int newrow, boolean result) {
@@ -85,11 +85,6 @@ public class Board {
             removeBetween(col, row, newcol, newrow);
         if (newrow == 0 || newrow == 7)
             makeQueen(newcol, newrow);
-        switchPlayer();
-    }
-
-    public void switchPlayer() {
-        whoseMove = (whoseMove == FigureColor.WHITE) ? FigureColor.BLACK : FigureColor.WHITE;
     }
 
     public void makeQueen(int col, int row) {
