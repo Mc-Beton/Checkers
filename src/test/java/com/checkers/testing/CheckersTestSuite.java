@@ -38,36 +38,20 @@ public class CheckersTestSuite {
         assertTrue(isThereAFigure);
         assertFalse(tileColor);
         assertFalse(newBoard.checkPlayerPick(4, 1, 5, 2));
-        assertFalse(newBoard.move(4,1, 5, 3));
     }
 
-    @DisplayName("Make a Queen")
+    @DisplayName("testing ppawn hit")
     @Test
-    void testMakingAQueen() {
+    void testBooleanCheckPawnHit() {
         //Given
         Board newBoard = new Board();
-        newBoard.setFigure(6, 1, new Pawn(FigureColor.WHITE));
+        newBoard.setFigure(4, 1, new Pawn(FigureColor.BLACK));
+        newBoard.setFigure(3, 2, new Pawn(FigureColor.WHITE));
 
         //When
-        newBoard.move(6, 1, 5, 0);
-        Figure figure = newBoard.getFigure(5, 0);
-        Figure testQueen = new Queen(FigureColor.WHITE);
+        boolean thePawnHits = newBoard.move(4,1, 2, 3, FigureColor.BLACK);
 
         //Then
-        assertEquals(testQueen.getClass(), figure.getClass());
+        assertTrue(thePawnHits);
     }
-    /*@Test
-    void testPlayerRoundSwitch() {
-        //Given
-        Board newBoard = new Board();
-        newBoard.setFigure(4, 1, new Pawn(FigureColor.WHITE));
-        boolean result = true;
-        FigureColor whoseMove = FigureColor.WHITE;
-
-        //When
-        newBoard.move(4, 1, 5, 2);
-
-        //Then
-        assertEquals(FigureColor.BLACK, whoseMove);
-    }*/
 }

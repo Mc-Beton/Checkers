@@ -13,8 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Game {
-    private GridPane grid;
-    private Board board;
+    private final GridPane grid;
+    private final Board board;
     private int oldX = -1;
     private int oldY = -1;
     private FigureColor whoseMove = FigureColor.WHITE;
@@ -31,18 +31,20 @@ public class Game {
     }
 
     public void doClick(int x, int y) {
-        if (oldX == -1 && board.getFigure(x,y).getColor() == whoseMove) {
+        if (oldX == -1 && board.getFigure(x, y).getColor() == whoseMove) {
             oldX = x;
             oldY = y;
-            Rectangle rectangle = new Rectangle(100, 100, Color.RED); //żeby była tylko ramka
+            Rectangle rectangle = new Rectangle(100, 100, Color.TRANSPARENT);
+            rectangle.setStroke(Color.RED);
             grid.add(rectangle, x, y);
         } else if (oldX != -1) {
             if (board.move(oldX, oldY, x, y, whoseMove)) {
                 whoseMove = (whoseMove == FigureColor.WHITE) ? FigureColor.BLACK : FigureColor.WHITE;
-
+                board.computerMoveBlack(whoseMove);
+                whoseMove = (whoseMove == FigureColor.WHITE) ? FigureColor.BLACK : FigureColor.WHITE;
             }
-            oldX=-1;
-            oldY=-1;
+            oldX = -1;
+            oldY = -1;
             displayOnBoard();
         }
     }
@@ -98,6 +100,7 @@ public class Game {
         figureDisplayAlignment(pawn);
         grid.add(pawn, col, row);
     }
+
     private void figureDisplayAlignment(ImageView figure) {
         GridPane.setHalignment(figure, HPos.CENTER);
         GridPane.setValignment(figure, VPos.CENTER);

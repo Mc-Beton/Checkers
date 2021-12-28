@@ -1,18 +1,12 @@
 package com.checkers.board;
 
 import com.checkers.Game;
-import  com.checkers.board.Board;
-import com.checkers.figures.FigureColor;
-import com.checkers.figures.Pawn;
-import com.checkers.figures.Queen;
 import javafx.application.Application;
 import javafx.geometry.*;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -44,6 +38,13 @@ public class CheckersRunner extends Application {
         Background background = setBackgroundBoard(checkBoard);
         GridPane grid = createMenuPane(background);
         setMenuButton(grid, primaryStage);
+        return grid;
+    }
+
+    private GridPane showWinner(Stage stage) {
+        Background background = setBackgroundBoard(checkBoard);
+        GridPane grid = createMenuPane(background);
+        setMenuButton(grid, stage);
         return grid;
     }
 
