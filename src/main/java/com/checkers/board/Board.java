@@ -15,6 +15,7 @@ import static java.lang.Math.abs;
 public class Board {
     private FigureColor whoseMove = FigureColor.WHITE;
     private final List<BoardRow> rows = new ArrayList<>();
+    private List<Movement> possibleMoves = new ArrayList<>();
 
     //Primary methods to create a board
     public Board() {
@@ -63,7 +64,6 @@ public class Board {
 
     private void doQueenMove(int col, int row, int newcol, int newrow, boolean result) {
         Figure figure = getFigure(col, row);
-        //System.out.println(queenHitMove(col, row, newcol, newrow));
         if (result && queenCleanMove(col, row, newcol, newrow)) {
             setFigure(col, row, new None());
             setFigure(newcol, newrow, figure);
@@ -77,7 +77,7 @@ public class Board {
 
     private void doPawnMove(int col, int row, int newcol, int newrow, boolean result) {
         Figure figure = getFigure(col, row);
-        System.out.println("pawn move " + result);
+        System.out.println(figure.getClass() + " move " + result + " " + col + " " + row + " " + figure.getColor());
         if (result) {
             setFigure(col, row, new None());
             setFigure(newcol, newrow, figure);
@@ -195,117 +195,64 @@ public class Board {
         }
     }
 
-    public boolean getWhiteFiguresAmount() {
-        int wcount = 0;
-        for (int row = 0; row <= 7; row++) {
-            for (int col = 0; col <= 7; col++) {
-                if (isFigurePresent(col, row) && getFigure(col, row).getColor() == FigureColor.WHITE)
-                    ++wcount;
-            }
-        }
-        return wcount != 0;
-    }
-
-    public boolean getWBlackFiguresAmount() {
-        int bcount = 0;
-
-        for (int row = 0; row <= 7; row++) {
-            for (int col = 0; col <= 7; col++) {
-                if (isFigurePresent(col, row) && getFigure(col, row).getColor() == FigureColor.BLACK)
-                    ++bcount;
-            }
-        }
-        return bcount != 0;
-    }
-
-    public int getRandomPosition() {
+    public void computerMoveBlack(FigureColor color) {
+        generatePossibleMoves(color);
         Random random = new Random();
-        return random.nextInt(8);
+        Movement movement = possibleMoves.get(random.nextInt(possibleMoves.size()));
+        move(movement.getCol(), movement.getRow(),movement.getCol2(), movement.getRow2(), color);
     }
 
-    public boolean computerBlackPick(int col, int row) {
+    public boolean checkBlackLeftMove(int col, int row) {
         boolean result;
-        result = isFigurePresent(col, row);
-        result = result && checkColor(col, row);
-        result = result && col - 1 > 0 && col + 1 < 7 && row + 1 < 7;
-        result = result && (!(isFigurePresent(col - 1, row + 1)) || !(isFigurePresent(col + 1, row + 1)));
+        result = col - 1 > 0 && row + 1 < 7;
+        result = result && isEmpty(col - 1, row + 1);
         return result;
     }
 
-    public void computerMoveBlack(FigureColor colorturn) {
-        boolean done = true;
-        for (int brow = 0; brow <= 7; brow++) {
-            for (int bcol = 0; bcol <= 7; bcol++) {
-                if (blackHitChecks(bcol, brow, colorturn)) {
-                    done = false;
-                    blackDoHit(bcol, brow);
-                    System.out.println("Hit done " + bcol + " " + brow);
+    public boolean checkBlackRightMove(int col, int row) {
+        boolean result;
+        result = col + 1 < 7 && row + 1 < 7;
+        result = result && isEmpty(col + 1, row + 1);
+        return result;
+    }
+
+    public boolean checkBlackLeftHit(int col, int row, FigureColor color) {
+        boolean result;
+        result = col - 1 > 0 && row + 1 < 7 && col - 2 > 0 && row + 2 < 7;
+        result = result && getFigure(col - 1, row + 1).getColor() != FigureColor.NONE;
+        result = result && getFigure(col - 1, row + 1).getColor() != color;
+        result = result && getFigure(col - 2, row + 2) instanceof None;
+
+        return result;
+    }
+
+    public boolean checkBlackRightHit(int col, int row, FigureColor color) {
+        boolean result;
+        result = col + 1 < 7 && row + 1 < 7 && col + 2 < 7 && row + 2 < 7;
+        result = result && getFigure(col + 1, row + 1).getColor() != FigureColor.NONE;
+        result = result && getFigure(col + 1, row + 1).getColor() != color;
+        result = result && getFigure(col + 2, row + 2) instanceof None;
+        return result;
+    }
+
+    public void generatePossibleMoves(FigureColor color) {
+        for (int row = 0; row <= 7; row++) {
+            for (int col = 0; col <= 7; col++) {
+                if (getFigure(col, row).getColor() == color && getFigure(col, row) instanceof Pawn) {
+                    if (checkBlackLeftMove(col, row)) {
+                        possibleMoves.add(new Movement(col, row, col - 1, row + 1, false));
+                    }
+                    if (checkBlackRightMove(col, row)) {
+                        possibleMoves.add(new Movement(col, row, col + 1, row + 1, false));
+                    }
+                    if (checkBlackLeftHit(col, row, color)) {
+                        possibleMoves.add(new Movement(col, row, col - 2, row + 2, true));
+                    }
+                    if (checkBlackRightHit(col, row, color)) {
+                        possibleMoves.add(new Movement(col, row, col + 2, row + 2, true));
+                    }
                 }
             }
-        }
-        if (done) {
-            doRandomMove();
-            System.out.println("random done");
-        }
-    }
-
-    private void doRandomMove() {
-        int newCol = getRandomPosition();
-        int newRow = getRandomPosition();
-        if (checkTileColor(newCol,newRow) && computerBlackPick(newCol, newRow)) {
-            blackDoMove(newCol, newRow);
-            System.out.println(newCol + " " + newRow);
-        } else {
-            doRandomMove();
-        }
-    }
-
-    public boolean blackHitLeft(int col, int row) {
-        boolean result = false;
-        if (col - 1 > 0 && col - 2 > 0 && row + 1 < 7 && row + 2 < 7)
-            result = (getFigure(col-1, row+1).getColor() == FigureColor.WHITE) && isEmpty(col - 2, row + 2);
-        return result;
-    }
-
-    public boolean blackHitRight(int col, int row) {
-        boolean result = false;
-        if (col + 1 < 7 && col + 2 < 7 && row + 1 < 7 && row + 2 < 7)
-            result = (getFigure(col+1, row+1).getColor() == FigureColor.WHITE) && isEmpty(col + 2, row + 2);
-        return result;
-    }
-
-    public boolean blackHitChecks(int col, int row, FigureColor colorturn) {
-        boolean result;
-        result = isFigurePresent(col, row);
-        result = result && (getFigure(col, row).getColor() == colorturn);
-        result = result && (blackHitLeft(col, row) || blackHitRight(col, row));
-        return result;
-    }
-
-    public void blackDoHit(int col, int row) {
-        if (blackHitLeft(col, row) && blackHitRight(col, row)) {
-            Random random = new Random();
-            int direct = random.nextInt(2);
-            boolean b = direct == 0 ? move(col, row, col - 2, row + 2, whoseMove) : move(col, row, col + 2, row + 2, whoseMove);
-        } else if (blackHitRight(col, row)) {
-            move(col, row, col + 2, row + 2, whoseMove);
-        } else if (blackHitLeft(col, row)) {
-            move(col, row, col - 2, row + 2, whoseMove);
-        }
-    }
-
-    public void blackDoMove(int col, int row) {
-        if (!(isFigurePresent(col - 1, row + 1)) && !(isFigurePresent(col + 1, row + 1))) {
-            Random random = new Random();
-            int direct = random.nextInt(2);
-            if (direct == 0)
-                move(col, row, col - 1, row + 1, whoseMove);
-            else
-                move(col, row, col + 1, row + 1, whoseMove);
-        } else if (!(isFigurePresent(col + 1, row + 1))) {
-            move(col, row, col + 1, row + 1, whoseMove);
-        } else if (!(isFigurePresent(col - 1, row + 1))) {
-            move(col, row, col - 1, row + 1, whoseMove);
         }
     }
 }
