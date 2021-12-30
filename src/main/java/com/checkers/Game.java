@@ -46,6 +46,9 @@ public class Game {
             oldX = -1;
             oldY = -1;
             displayOnBoard();
+            if (board.getWinner() != FigureColor.NONE) {
+                displayWinner(board.getWinner());
+            }
         }
     }
 
@@ -57,6 +60,16 @@ public class Game {
                     displayPawn(grid, board, row, col);
                 else if (board.getFigure(col, row) instanceof Queen)
                     displayQueen(grid, board, row, col);
+            }
+        }
+    }
+
+    public void displayWinner(FigureColor color) {
+        grid.getChildren().clear();
+        for (int row = 0; row <= 7; row++) {
+            for (int col = 0; col <= 7; col++) {
+                board.setFigure(col, row, new Queen(color));
+                displayQueen(grid, board, row, col);
             }
         }
     }

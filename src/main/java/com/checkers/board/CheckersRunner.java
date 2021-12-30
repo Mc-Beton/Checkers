@@ -41,13 +41,6 @@ public class CheckersRunner extends Application {
         return grid;
     }
 
-    private GridPane showWinner(Stage stage) {
-        Background background = setBackgroundBoard(checkBoard);
-        GridPane grid = createMenuPane(background);
-        setMenuButton(grid, stage);
-        return grid;
-    }
-
     private void setMenuButton(GridPane grid, Stage stage) {
         setStartbutton(stage);
         menuButtons.setVgap(20);

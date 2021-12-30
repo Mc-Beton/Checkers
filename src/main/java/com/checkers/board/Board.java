@@ -239,20 +239,48 @@ public class Board {
         for (int row = 0; row <= 7; row++) {
             for (int col = 0; col <= 7; col++) {
                 if (getFigure(col, row).getColor() == color && getFigure(col, row) instanceof Pawn) {
-                    if (checkBlackLeftMove(col, row)) {
-                        possibleMoves.add(new Movement(col, row, col - 1, row + 1, false));
-                    }
-                    if (checkBlackRightMove(col, row)) {
-                        possibleMoves.add(new Movement(col, row, col + 1, row + 1, false));
-                    }
-                    if (checkBlackLeftHit(col, row, color)) {
-                        possibleMoves.add(new Movement(col, row, col - 2, row + 2, true));
-                    }
-                    if (checkBlackRightHit(col, row, color)) {
-                        possibleMoves.add(new Movement(col, row, col + 2, row + 2, true));
-                    }
+                    addBlackPawnMove(row, col);
+                    addBlackPawnHit(color, row, col);
                 }
             }
         }
+    }
+
+    private void addBlackPawnHit(FigureColor color, int row, int col) {
+        if (checkBlackLeftHit(col, row, color)) {
+            possibleMoves.add(new Movement(col, row, col - 2, row + 2, true));
+        }
+        if (checkBlackRightHit(col, row, color)) {
+            possibleMoves.add(new Movement(col, row, col + 2, row + 2, true));
+        }
+    }
+
+    private void addBlackPawnMove(int row, int col) {
+        if (checkBlackLeftMove(col, row)) {
+            possibleMoves.add(new Movement(col, row, col - 1, row + 1, false));
+        }
+        if (checkBlackRightMove(col, row)) {
+            possibleMoves.add(new Movement(col, row, col + 1, row + 1, false));
+        }
+    }
+
+    public FigureColor getWinner() {
+        int wAmount = 0;
+        int bAmount = 0;
+        FigureColor winner = FigureColor.NONE;
+        for (int row = 0; row <= 7; row++) {
+            for (int col = 0; col <= 7; col++) {
+                if (getFigure(col, row).getColor() == FigureColor.WHITE) {
+                    ++wAmount;
+                }
+                if (getFigure(col, row).getColor() == FigureColor.BLACK)
+                    ++bAmount;
+            }
+        }
+        if (bAmount == 0)
+            return winner = FigureColor.WHITE;
+        if (wAmount == 0)
+            return winner = FigureColor.BLACK;
+        return winner;
     }
 }
