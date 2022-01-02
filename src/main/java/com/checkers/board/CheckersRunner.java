@@ -15,7 +15,10 @@ public class CheckersRunner extends Application {
     private final Image checkBoard = new Image("file:src/main/resources/board.jpg");
     private final Image newGame = new Image("file:src/main/resources/Menu/newGame.gif");
     private final Image exitGame = new Image("file:src/main/resources/Menu/exit.gif");
+    private final Image onePlayer = new Image("file:src/main/resources/Menu/OnePlayer.gif");
+    private final Image twoPlayer = new Image("file:src/main/resources/Menu/TwoPlayer.gif");
     private final FlowPane menuButtons = new FlowPane(Orientation.VERTICAL);
+    private final FlowPane menuPlayerButtons = new FlowPane(Orientation.VERTICAL);
 
     public static void main(String[] args) {
         launch(args);
@@ -41,12 +44,27 @@ public class CheckersRunner extends Application {
         return grid;
     }
 
+    private GridPane showPlayerMenu(Stage primaryStage) {
+        Background background = setBackgroundBoard(checkBoard);
+        GridPane grid = createMenuPane(background);
+        setMenuPlayerButton(grid, primaryStage);
+        return grid;
+    }
+
     private void setMenuButton(GridPane grid, Stage stage) {
         setStartButton(stage);
         menuButtons.setVgap(20);
         setExitButton();
         menuButtons.setAlignment(Pos.CENTER);
         grid.add(menuButtons, 0, 0);
+    }
+
+    private void setMenuPlayerButton(GridPane grid, Stage stage) {
+        setStartOnePlayer(stage);
+        menuPlayerButtons.setVgap(20);
+        setStartTwoPlayer(stage);
+        menuPlayerButtons.setAlignment(Pos.CENTER);
+        grid.add(menuPlayerButtons, 0, 0);
     }
 
     private void setExitButton() {
@@ -57,18 +75,40 @@ public class CheckersRunner extends Application {
         menuButtons.getChildren().add(terminateGame);
     }
 
+    private void setStartTwoPlayer(Stage stage) {
+        Button startNewTwoPlayerGame = new Button();
+        startNewTwoPlayerGame.setGraphic(new ImageView(twoPlayer));
+        startNewTwoPlayerGame.setBackground(null);
+        startNewTwoPlayerGame.setOnAction(event -> {
+            GridPane grid = startANewTwoPlayerGame();
+            showScene(stage, grid);
+        });
+        menuPlayerButtons.getChildren().add(startNewTwoPlayerGame);
+    }
+
+    private void setStartOnePlayer(Stage stage) {
+        Button startNewOnePlayerGame = new Button();
+        startNewOnePlayerGame.setGraphic(new ImageView(onePlayer));
+        startNewOnePlayerGame.setBackground(null);
+        startNewOnePlayerGame.setOnAction(event -> {
+            GridPane grid = startANewOnePlayerGame();
+            showScene(stage, grid);
+        });
+        menuPlayerButtons.getChildren().add(startNewOnePlayerGame);
+    }
+
     private void setStartButton(Stage stage) {
         Button startNewGame = new Button();
         startNewGame.setGraphic(new ImageView(newGame));
         startNewGame.setBackground(null);
         startNewGame.setOnAction(event -> {
-            GridPane grid = startANewGame();
+            GridPane grid = showPlayerMenu(stage);
             showScene(stage, grid);
         });
         menuButtons.getChildren().add(startNewGame);
     }
 
-    private GridPane startANewGame() {
+    private GridPane startANewOnePlayerGame() {
         Background background = setBackgroundBoard(checkBoard);
         GridPane grid = createGridPane(background);
         Board newBoard = new Board();
@@ -79,6 +119,21 @@ public class CheckersRunner extends Application {
             int x = (int)e.getX()/100;
             int y = (int)e.getY()/100;
             game.doClick(x, y);
+        });
+        return grid;
+    }
+
+    private GridPane startANewTwoPlayerGame() {
+        Background background = setBackgroundBoard(checkBoard);
+        GridPane grid = createGridPane(background);
+        Board newBoard = new Board();
+        newBoard.setNewGame();
+        Game game = new Game(grid, newBoard);
+        game.displayOnBoard();
+        grid.setOnMouseClicked(e -> {
+            int x = (int)e.getX()/100;
+            int y = (int)e.getY()/100;
+            game.doClickTwoPlayer(x, y);
         });
         return grid;
     }

@@ -52,6 +52,26 @@ public class Game {
         }
     }
 
+    public void doClickTwoPlayer(int x, int y) {
+        if (oldX == -1 && board.getFigure(x, y).getColor() == whoseMove) {
+            oldX = x;
+            oldY = y;
+            Rectangle rectangle = new Rectangle(100, 100, Color.TRANSPARENT);
+            rectangle.setStroke(Color.RED);
+            grid.add(rectangle, x, y);
+        } else if (oldX != -1) {
+            if (board.move(oldX, oldY, x, y, whoseMove)) {
+                whoseMove = (whoseMove == FigureColor.WHITE) ? FigureColor.BLACK : FigureColor.WHITE;
+            }
+            oldX = -1;
+            oldY = -1;
+            displayOnBoard();
+            if (board.getWinner() != FigureColor.NONE) {
+                displayWinner(board.getWinner());
+            }
+        }
+    }
+
     public void displayOnBoard() {
         grid.getChildren().clear();
         for (int row = 0; row <= 7; row++) {

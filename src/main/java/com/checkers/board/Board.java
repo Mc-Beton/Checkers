@@ -9,6 +9,7 @@ import com.checkers.figures.Queen;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
@@ -16,6 +17,7 @@ public class Board {
     private FigureColor whoseMove = FigureColor.WHITE;
     private final List<BoardRow> rows = new ArrayList<>();
     private List<Movement> possibleMoves = new ArrayList<>();
+    private List<Movement> possibleHitMoves = new ArrayList<>();
 
     //Primary methods to create a board
     public Board() {
@@ -198,10 +200,14 @@ public class Board {
     public void computerMoveBlack(FigureColor color) {
         generatePossibleMoves(color);
         Random random = new Random();
-        if (possibleMoves.size() > 0) {
-            Movement movement = possibleMoves.get(random.nextInt(possibleMoves.size()));
-            move(movement.getCol(), movement.getRow(), movement.getCol2(), movement.getRow2(), color);
-            System.out.println(possibleMoves.size());
+        if (!(possibleMoves.isEmpty())) {
+            if (possibleMoves.stream().anyMatch(Movement::isWithHit)) {
+                Movement movement = possibleMoves.stream().filter(Movement::isWithHit).collect(Collectors.toList()).get(random.nextInt(possibleMoves.stream().filter(Movement::isWithHit).collect(Collectors.toList()).size()));;
+                move(movement.getCol(), movement.getRow(), movement.getCol2(), movement.getRow2(), color);
+            } else {
+                Movement movement = possibleMoves.get(random.nextInt(possibleMoves.size()));
+                move(movement.getCol(), movement.getRow(), movement.getCol2(), movement.getRow2(), color);
+            }
         }
     }
 
@@ -282,9 +288,9 @@ public class Board {
             }
         }
         if (bAmount == 0)
-            return winner = FigureColor.WHITE;
+            return FigureColor.WHITE;
         if (wAmount == 0)
-            return winner = FigureColor.BLACK;
+            return FigureColor.BLACK;
         return winner;
     }
 }
