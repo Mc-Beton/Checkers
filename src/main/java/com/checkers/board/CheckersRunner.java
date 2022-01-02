@@ -42,7 +42,7 @@ public class CheckersRunner extends Application {
     }
 
     private void setMenuButton(GridPane grid, Stage stage) {
-        setStartbutton(stage);
+        setStartButton(stage);
         menuButtons.setVgap(20);
         setExitButton();
         menuButtons.setAlignment(Pos.CENTER);
@@ -50,14 +50,14 @@ public class CheckersRunner extends Application {
     }
 
     private void setExitButton() {
-        Button treminateGame = new Button();
-        treminateGame.setGraphic(new ImageView(exitGame));
-        treminateGame.setBackground(null);
-        treminateGame.setOnAction(event -> System.exit(0));
-        menuButtons.getChildren().add(treminateGame);
+        Button terminateGame = new Button();
+        terminateGame.setGraphic(new ImageView(exitGame));
+        terminateGame.setBackground(null);
+        terminateGame.setOnAction(event -> System.exit(0));
+        menuButtons.getChildren().add(terminateGame);
     }
 
-    private void setStartbutton(Stage stage) {
+    private void setStartButton(Stage stage) {
         Button startNewGame = new Button();
         startNewGame.setGraphic(new ImageView(newGame));
         startNewGame.setBackground(null);

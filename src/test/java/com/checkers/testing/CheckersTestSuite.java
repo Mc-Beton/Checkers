@@ -1,11 +1,15 @@
 package com.checkers.testing;
 
 import com.checkers.board.Board;
+import com.checkers.board.Movement;
 import com.checkers.figures.Figure;
 import com.checkers.figures.FigureColor;
 import com.checkers.figures.Pawn;
 import com.checkers.figures.Queen;
 import org.junit.jupiter.api.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,13 +49,13 @@ public class CheckersTestSuite {
     void testBooleanCheckPawnHit() {
         //Given
         Board newBoard = new Board();
+        List<Movement> possibleMoves = new ArrayList<>();
         newBoard.setFigure(4, 1, new Pawn(FigureColor.BLACK));
-        newBoard.setFigure(3, 2, new Pawn(FigureColor.WHITE));
 
         //When
-        boolean thePawnHits = newBoard.move(4,1, 2, 3, FigureColor.BLACK);
+        newBoard.generatePossibleMoves(FigureColor.BLACK);
 
         //Then
-        assertTrue(thePawnHits);
+        assertEquals(2, possibleMoves.size());
     }
 }

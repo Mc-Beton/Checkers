@@ -58,7 +58,7 @@ public class Game {
             for (int col = 0; col <= 7; col++) {
                 if (board.getFigure(col, row) instanceof Pawn)
                     displayPawn(grid, board, row, col);
-                else if (board.getFigure(col, row) instanceof Queen)
+                if (board.getFigure(col, row) instanceof Queen)
                     displayQueen(grid, board, row, col);
             }
         }

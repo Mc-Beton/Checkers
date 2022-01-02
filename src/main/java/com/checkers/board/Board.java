@@ -198,8 +198,11 @@ public class Board {
     public void computerMoveBlack(FigureColor color) {
         generatePossibleMoves(color);
         Random random = new Random();
-        Movement movement = possibleMoves.get(random.nextInt(possibleMoves.size()));
-        move(movement.getCol(), movement.getRow(),movement.getCol2(), movement.getRow2(), color);
+        if (possibleMoves.size() > 0) {
+            Movement movement = possibleMoves.get(random.nextInt(possibleMoves.size()));
+            move(movement.getCol(), movement.getRow(), movement.getCol2(), movement.getRow2(), color);
+            System.out.println(possibleMoves.size());
+        }
     }
 
     public boolean checkBlackLeftMove(int col, int row) {
@@ -236,6 +239,7 @@ public class Board {
     }
 
     public void generatePossibleMoves(FigureColor color) {
+        possibleMoves.clear();
         for (int row = 0; row <= 7; row++) {
             for (int col = 0; col <= 7; col++) {
                 if (getFigure(col, row).getColor() == color && getFigure(col, row) instanceof Pawn) {
